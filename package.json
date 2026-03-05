@@ -16,6 +16,7 @@
         "dev:order": "npm run dev --workspace=services/order-service",
         "seed:identity": "npx ts-node services/identity-service/src/utils/seed.ts",
         "seed:catalog": "npx ts-node services/catalog-service/src/utils/seed.ts",
+        "seed:orders": "npx ts-node services/order-service/src/utils/seed.ts",
         "test": "jest --passWithNoTests"
     },
     "keywords": [

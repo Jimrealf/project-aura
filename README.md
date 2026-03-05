@@ -135,15 +135,30 @@ Each microservice follows a layered architecture: `controllers/ â†’ services/ â†
 | DELETE | `/api/cart/:productId` | Authenticated | Remove specific item from cart |
 | DELETE | `/api/cart` | Authenticated | Clear entire cart |
 
+### Order Service (Port 3004)
+
+| Method | Route | Access | Description |
+|--------|-------|--------|-------------|
+| POST | `/api/checkout` | Customer | Place an order from current cart |
+| GET | `/api/orders/me` | Authenticated | View my order history (paginated) |
+| GET | `/api/orders/me/:orderId` | Authenticated | View a specific order's details |
+| GET | `/api/orders` | Admin only | View all orders (paginated, filterable by status) |
+| PATCH | `/api/orders/:orderId/status` | Admin only | Update order status |
+
 ## Seed Data
 
-Populate the databases with test users and sample products:
+Populate the databases with test users, sample products, and realistic orders:
 
 ```bash
-docker compose up -d postgres mongodb
+docker compose up -d
 npm run seed:identity
 npm run seed:catalog
+npm run seed:orders
 ```
+
+> **Note:** Seeds must be run in order. `seed:orders` depends on users from `seed:identity` and products from `seed:catalog`.
+
+The order seed creates 1-4 orders per customer (50-100 total orders) with randomized products, quantities, shipping addresses, statuses, and dates spanning the last 90 days.
 
 ### Test Accounts
 

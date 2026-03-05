@@ -15,6 +15,16 @@ const swaggerOptions: swaggerJsdoc.Options = {
                 description: "API Gateway (Development)",
             },
         ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                    bearerFormat: "JWT",
+                    description: "Enter the JWT token from /api/auth/login response",
+                },
+            },
+        },
     },
     apis: [
         path.resolve(__dirname, "../../services/*/src/routes/*.ts"),

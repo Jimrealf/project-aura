@@ -98,6 +98,38 @@ project-aura/
 
 Each microservice follows a layered architecture: `controllers/ → services/ → repositories/`
 
+## API Endpoints (Identity Service)
+
+| Method | Route | Access | Description |
+|--------|-------|--------|-------------|
+| POST | `/api/auth/register` | Public | Customer registration |
+| POST | `/api/auth/register/vendor` | Public | Vendor registration |
+| POST | `/api/auth/login` | Public | Login (returns JWT) |
+| POST | `/api/auth/internal-user` | Admin only | Create support/admin users |
+| POST | `/api/auth/forgot-password` | Public | Request password reset token |
+| POST | `/api/auth/reset-password` | Public | Reset password with token |
+
+## Seed Data
+
+To populate the database with test users:
+
+```bash
+docker compose up -d postgres
+npx ts-node services/identity-service/src/utils/seed.ts
+```
+
+### Test Accounts
+
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | `admin@aura.com` | `Admin1234` |
+| Customer | `john.doe@aura.com` | `Customer123` |
+| Vendor | `techstore@aura.com` | `Vendor1234` |
+| Support | `support.alex@aura.com` | `Support1234` |
+
+All customer emails use password `Customer123`. All vendor emails use `Vendor1234`.
+Full list of seed users is in `services/identity-service/src/utils/seed.ts`.
+
 ## License
 
 ISC

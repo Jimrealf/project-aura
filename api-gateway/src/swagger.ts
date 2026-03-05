@@ -15,6 +15,10 @@ const swaggerOptions: swaggerJsdoc.Options = {
                 description: "API Gateway (Development)",
             },
         ],
+        tags: [
+            { name: "Auth", description: "Authentication and User Management" },
+            { name: "Products", description: "Catalog and Inventory" }
+        ],
         components: {
             securitySchemes: {
                 bearerAuth: {

@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { AuthController } from "../controllers/auth.controller";
-import { verifyToken } from "../middlewares/verifyToken";
-import { requireAdmin } from "../middlewares/requireAdmin";
+import { verifyToken, requireAdmin } from "@aura/auth-middleware";
 
 const router = Router();
 

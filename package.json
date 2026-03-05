@@ -4,6 +4,7 @@
     "description": "Scalable E-Commerce Platform using Microservices Architecture",
     "private": true,
     "workspaces": [
+        "packages/*",
         "api-gateway",
         "services/*"
     ],
@@ -13,6 +14,8 @@
         "dev:catalog": "npm run dev --workspace=services/catalog-service",
         "dev:cart": "npm run dev --workspace=services/cart-service",
         "dev:order": "npm run dev --workspace=services/order-service",
+        "seed:identity": "npx ts-node services/identity-service/src/utils/seed.ts",
+        "seed:catalog": "npx ts-node services/catalog-service/src/utils/seed.ts",
         "test": "jest --passWithNoTests"
     },
     "keywords": [

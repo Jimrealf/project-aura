@@ -57,6 +57,8 @@ This spins up PostgreSQL, MongoDB, and Redis containers.
 
 ### Run Services
 
+> **Note:** The Catalog Service uses Cloudinary for image uploads. Make sure your `.env` file in `services/catalog-service` has `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` configured.
+
 ```bash
 npm run dev:gateway    # API Gateway      → http://localhost:3000
 npm run dev:identity   # Identity Service → http://localhost:3001
@@ -86,6 +88,8 @@ docker compose down
 ```
 project-aura/
 ├── api-gateway/             # Express reverse proxy & Swagger UI
+├── packages/
+│   └── auth-middleware/     # Shared JWT verification (@aura/auth-middleware)
 ├── services/
 │   ├── identity-service/    # Auth & Users (PostgreSQL)
 │   ├── catalog-service/     # Products & Inventory (MongoDB)
@@ -98,7 +102,9 @@ project-aura/
 
 Each microservice follows a layered architecture: `controllers/ → services/ → repositories/`
 
-## API Endpoints (Identity Service)
+## API Endpoints
+
+### Identity Service (Port 3001)
 
 | Method | Route | Access | Description |
 |--------|-------|--------|-------------|
@@ -109,13 +115,24 @@ Each microservice follows a layered architecture: `controllers/ → services/ �
 | POST | `/api/auth/forgot-password` | Public | Request password reset token |
 | POST | `/api/auth/reset-password` | Public | Reset password with token |
 
+### Catalog Service (Port 3002)
+
+| Method | Route | Access | Description |
+|--------|-------|--------|-------------|
+| GET | `/api/products` | Public | List products (pagination, filters, search by `?q=...`) |
+| GET | `/api/products/:slug` | Public | View single product |
+| POST | `/api/products` | Admin/Vendor | Create product (supports `multipart/form-data` image upload) |
+| PUT | `/api/products/:id` | Admin/Vendor | Update product details or images |
+| DELETE | `/api/products/:id` | Admin/Vendor | Soft-delete a product |
+
 ## Seed Data
 
-To populate the database with test users:
+Populate the databases with test users and sample products:
 
 ```bash
-docker compose up -d postgres
-npx ts-node services/identity-service/src/utils/seed.ts
+docker compose up -d postgres mongodb
+npm run seed:identity
+npm run seed:catalog
 ```
 
 ### Test Accounts

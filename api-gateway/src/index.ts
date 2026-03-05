@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger";
@@ -7,7 +9,36 @@ import swaggerSpec from "./swagger";
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
-app.use(cors());
+app.use(helmet());
+
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",");
+app.use(cors(allowedOrigins ? { origin: allowedOrigins } : undefined));
+
+const globalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+        success: false,
+        error: "Too many requests, please try again later",
+        code: "RATE_LIMIT_EXCEEDED",
+    },
+});
+
+const strictLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 10,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+        success: false,
+        error: "Too many requests, please try again later",
+        code: "RATE_LIMIT_EXCEEDED",
+    },
+});
+
+app.use(globalLimiter);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
@@ -17,6 +48,7 @@ app.get("/health", (_req, res) => {
 
 app.use(
     "/api/auth",
+    strictLimiter,
     createProxyMiddleware({
         target: "http://localhost:3001",
         changeOrigin: true,
@@ -49,15 +81,18 @@ app.use(
 
 app.use(
     "/api/checkout",
+    strictLimiter,
     createProxyMiddleware({
         target: "http://localhost:3004",
         changeOrigin: true,
     })
 );
 
-app.listen(PORT, () => {
-    console.log(`[API Gateway] Running on http://localhost:${PORT}`);
-    console.log(`[API Gateway] Swagger UI at http://localhost:${PORT}/api-docs`);
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`[API Gateway] Running on http://localhost:${PORT}`);
+        console.log(`[API Gateway] Swagger UI at http://localhost:${PORT}/api-docs`);
+    });
+}
 
 export default app;

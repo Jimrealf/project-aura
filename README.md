@@ -22,7 +22,7 @@ Postgres  MongoDB   Redis   Postgres
 | Layer | Technology |
 |-------|-----------|
 | Runtime | Node.js + TypeScript |
-| API Gateway | Express + http-proxy-middleware |
+| API Gateway | Express + http-proxy-middleware + helmet + rate limiting |
 | Identity Service | Express + PostgreSQL (`pg`) + JWT + bcrypt |
 | Catalog Service | Express + MongoDB (`mongoose`) |
 | Cart Service | Express + Redis (`ioredis`) |
@@ -144,6 +144,13 @@ Each microservice follows a layered architecture: `controllers/ → services/ �
 | GET | `/api/orders/me/:orderId` | Authenticated | View a specific order's details |
 | GET | `/api/orders` | Admin only | View all orders (paginated, filterable by status) |
 | PATCH | `/api/orders/:orderId/status` | Admin only | Update order status |
+
+## Security
+
+- **Rate Limiting** — Per-IP rate limiting at the API Gateway with stricter limits on sensitive endpoints
+- **Security Headers** — `helmet` middleware hardens all responses
+- **CORS** — Configurable via `ALLOWED_ORIGINS` env var (comma-separated), defaults to `*` in dev
+- **Error Handling** — Global error handler in every service ensures no stack traces are leaked; all errors return clean JSON
 
 ## Seed Data
 

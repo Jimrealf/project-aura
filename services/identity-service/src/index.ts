@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.routes";
 import { initializeDatabase } from "./utils/initDb";
@@ -15,6 +15,15 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+    console.error("[Identity Service] Unhandled error:", err);
+    res.status(500).json({
+        success: false,
+        error: "Internal server error",
+        code: "INTERNAL_ERROR",
+    });
+});
 
 initializeDatabase()
     .then(() => {

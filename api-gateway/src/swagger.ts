@@ -17,7 +17,8 @@ const swaggerOptions: swaggerJsdoc.Options = {
         ],
         tags: [
             { name: "Auth", description: "Authentication and User Management" },
-            { name: "Products", description: "Catalog and Inventory" }
+            { name: "Products", description: "Catalog and Inventory" },
+            { name: "Cart", description: "Shopping Cart Management" }
         ],
         components: {
             securitySchemes: {

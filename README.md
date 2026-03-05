@@ -125,6 +125,16 @@ Each microservice follows a layered architecture: `controllers/ â†’ services/ â†
 | PUT | `/api/products/:id` | Admin/Vendor | Update product details or images |
 | DELETE | `/api/products/:id` | Admin/Vendor | Soft-delete a product |
 
+### Cart Service (Port 3003)
+
+| Method | Route | Access | Description |
+|--------|-------|--------|-------------|
+| POST | `/api/cart` | Authenticated | Add item to cart (`{ slug, quantity }`) |
+| GET | `/api/cart` | Authenticated | View current cart with subtotal |
+| PUT | `/api/cart` | Authenticated | Update item quantity (`{ product_id, quantity }`) |
+| DELETE | `/api/cart/:productId` | Authenticated | Remove specific item from cart |
+| DELETE | `/api/cart` | Authenticated | Clear entire cart |
+
 ## Seed Data
 
 Populate the databases with test users and sample products:

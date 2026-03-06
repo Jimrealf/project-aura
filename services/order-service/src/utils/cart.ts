@@ -1,7 +1,7 @@
 import axios from "axios";
 import { CartResponse } from "../types/order.types";
 
-const CART_URL = process.env.CART_SERVICE_URL ?? "http://localhost:3003";
+const CART_URL = process.env.CART_SERVICE_URL!;
 
 export async function fetchCart(token: string): Promise<CartResponse> {
     const response = await axios.get(`${CART_URL}/api/cart`, {

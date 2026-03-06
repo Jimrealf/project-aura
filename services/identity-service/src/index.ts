@@ -1,9 +1,10 @@
-import express, { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
+import path from "path";
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
+
+import express, { Request, Response, NextFunction } from "express";
 import authRoutes from "./routes/auth.routes";
 import { initializeDatabase } from "./utils/initDb";
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT ?? 3001;
@@ -25,15 +26,15 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     });
 });
 
-initializeDatabase()
-    .then(() => {
-        app.listen(PORT, () => {
-            console.log(`[Identity Service] Running on http://localhost:${PORT}`);
-        });
-    })
-    .catch((err) => {
-        console.error("[Identity Service] Failed to start:", err);
-        process.exit(1);
+const start = async () => {
+    await initializeDatabase();
+    app.listen(PORT, () => {
+        console.log(`[Identity Service] Running on http://localhost:${PORT}`);
     });
+};
+
+if (require.main === module) {
+    start();
+}
 
 export default app;

@@ -8,16 +8,16 @@ dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 import { ProductModel } from "../models/product.model";
 import { uploadImage } from "./cloudinary";
 
-const MONGO_URI = process.env.MONGO_URI ?? "mongodb://localhost:27017/aura_catalog";
+const MONGO_URI = process.env.MONGO_URI!;
 
 const SEED_IMAGES_DIR = path.resolve(__dirname, "../../assets/seed-images");
 
 const identityPool = new Pool({
-    host: process.env.IDENTITY_DB_HOST ?? "localhost",
-    port: parseInt(process.env.IDENTITY_DB_PORT ?? "5432", 10),
-    user: process.env.IDENTITY_DB_USER ?? "aura",
-    password: process.env.IDENTITY_DB_PASSWORD ?? "aura_dev",
-    database: process.env.IDENTITY_DB_NAME ?? "aura_db",
+    host: process.env.IDENTITY_DB_HOST ?? process.env.DB_HOST,
+    port: parseInt(process.env.IDENTITY_DB_PORT ?? process.env.DB_PORT ?? "5432", 10),
+    user: process.env.IDENTITY_DB_USER ?? process.env.DB_USER,
+    password: process.env.IDENTITY_DB_PASSWORD ?? process.env.DB_PASSWORD,
+    database: process.env.IDENTITY_DB_NAME ?? process.env.DB_NAME,
 });
 
 async function fetchVendorIds(): Promise<string[]> {

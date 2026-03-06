@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const MONGO_URI = process.env.MONGO_URI ?? "mongodb://localhost:27017/aura_catalog";
+const MONGO_URI = process.env.MONGO_URI!;
 
 export const connectDb = async (): Promise<void> => {
     try {

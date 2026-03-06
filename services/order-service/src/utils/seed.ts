@@ -7,14 +7,14 @@ import { computeShipping } from "./shipping";
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 const orderPool = new Pool({
-    host: process.env.DB_HOST ?? "localhost",
+    host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT ?? "5432", 10),
-    user: process.env.DB_USER ?? "aura",
-    password: process.env.DB_PASSWORD ?? "aura_dev",
-    database: process.env.DB_NAME ?? "aura_db",
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
 });
 
-const MONGO_URI = process.env.MONGO_URI ?? "mongodb://localhost:27017/aura_catalog";
+const MONGO_URI = process.env.MONGO_URI!;
 
 interface SeedProduct {
     id: string;

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { CatalogProduct } from "../types/order.types";
 
-const CATALOG_URL = process.env.CATALOG_SERVICE_URL ?? "http://localhost:3002";
+const CATALOG_URL = process.env.CATALOG_SERVICE_URL!;
 
 export async function fetchProduct(slug: string): Promise<CatalogProduct | null> {
     try {

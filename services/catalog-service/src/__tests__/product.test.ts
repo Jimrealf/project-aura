@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import app from "../index";
 import { ProductModel } from "../models/product.model";
 
-const JWT_SECRET = process.env.JWT_SECRET ?? "aura_dev_secret_key";
+const JWT_SECRET = process.env.JWT_SECRET!;
 
 const vendorId = "vendor_uuid_techstore_123";
 const otherVendorId = "vendor_uuid_other_123";
@@ -19,7 +19,7 @@ describe("Catalog Service - Product API", () => {
 
     beforeAll(async () => {
         if (mongoose.connection.readyState === 0) {
-            await mongoose.connect(process.env.MONGO_URI_TEST ?? "mongodb://localhost:27017/aura_catalog_test");
+            await mongoose.connect(process.env.MONGO_URI_TEST!);
         }
         await ProductModel.deleteMany({});
     });

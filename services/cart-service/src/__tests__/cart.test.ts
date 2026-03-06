@@ -4,7 +4,7 @@ import app from "../index";
 import { redis } from "../utils/redis";
 import * as catalog from "../utils/catalog";
 
-const JWT_SECRET = process.env.JWT_SECRET ?? "aura_dev_secret_key";
+const JWT_SECRET = process.env.JWT_SECRET!;
 
 const customerId = "customer_uuid_test_123";
 const otherCustomerId = "customer_uuid_other_456";

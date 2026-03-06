@@ -9,12 +9,12 @@ Client (React/Mobile)
         |
   API Gateway (Express - Port 3000)
         |
-  ┌─────┼──────────┬──────────┐
-  |     |          |          |
-Identity  Catalog    Cart     Order
-:3001    :3002     :3003    :3004
-  |       |          |        |
-Postgres  MongoDB   Redis   Postgres
+  ┌─────┼──────────┬──────────┬──────────┐
+  |     |          |          |          |
+Identity  Catalog    Cart     Order    Payment
+:3001    :3002     :3003    :3004     :3005
+  |       |          |        |          |
+Postgres  MongoDB   Redis   Postgres  Postgres + Stripe
 ```
 
 ## Tech Stack
@@ -27,6 +27,7 @@ Postgres  MongoDB   Redis   Postgres
 | Catalog Service | Express + MongoDB (`mongoose`) |
 | Cart Service | Express + Redis (`ioredis`) |
 | Order Service | Express + PostgreSQL (`pg`) + Axios |
+| Payment Service | Express + PostgreSQL (`pg`) + Stripe SDK |
 | API Docs | Swagger UI (swagger-jsdoc) |
 | Testing | Jest + ts-jest + Supertest |
 | Infrastructure | Docker Compose |
@@ -55,16 +56,29 @@ docker compose up -d
 
 This spins up PostgreSQL, MongoDB, and Redis containers.
 
-### Run Services
+### Configure Environment
 
-> **Note:** The Catalog Service uses Cloudinary for image uploads. Make sure your `.env` file in `services/catalog-service` has `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` configured.
+Each service requires a `.env` file. Copy the example files and fill in your values:
 
 ```bash
-npm run dev:gateway    # API Gateway      → http://localhost:3000
-npm run dev:identity   # Identity Service → http://localhost:3001
-npm run dev:catalog    # Catalog Service  → http://localhost:3002
-npm run dev:cart       # Cart Service     → http://localhost:3003
-npm run dev:order      # Order Service    → http://localhost:3004
+cp services/identity-service/.env.example services/identity-service/.env
+cp services/catalog-service/.env.example services/catalog-service/.env
+cp services/cart-service/.env.example services/cart-service/.env
+cp services/order-service/.env.example services/order-service/.env
+cp services/payment-service/.env.example services/payment-service/.env
+```
+
+> **Note:** The Catalog Service requires Cloudinary credentials for image uploads. The Payment Service requires Stripe test keys (see [Stripe Local Development](#stripe-local-development) below).
+
+### Run Services
+
+```bash
+npm run dev:gateway    # API Gateway       → http://localhost:3000
+npm run dev:identity   # Identity Service  → http://localhost:3001
+npm run dev:catalog    # Catalog Service   → http://localhost:3002
+npm run dev:cart       # Cart Service      → http://localhost:3003
+npm run dev:order      # Order Service     → http://localhost:3004
+npm run dev:payment    # Payment Service   → http://localhost:3005
 ```
 
 ### API Documentation
@@ -94,7 +108,8 @@ project-aura/
 │   ├── identity-service/    # Auth & Users (PostgreSQL)
 │   ├── catalog-service/     # Products & Inventory (MongoDB)
 │   ├── cart-service/        # Shopping Cart (Redis)
-│   └── order-service/       # Checkout & Orders (PostgreSQL)
+│   ├── order-service/       # Checkout & Orders (PostgreSQL)
+│   └── payment-service/     # Payments & Stripe (PostgreSQL + Stripe)
 ├── docker-compose.yml       # Local infrastructure
 ├── tsconfig.json            # Shared TypeScript config
 └── jest.config.ts           # Test configuration
@@ -144,6 +159,32 @@ Each microservice follows a layered architecture: `controllers/ → services/ �
 | GET | `/api/orders/me/:orderId` | Authenticated | View a specific order's details |
 | GET | `/api/orders` | Admin only | View all orders (paginated, filterable by status) |
 | PATCH | `/api/orders/:orderId/status` | Admin only | Update order status |
+
+### Payment Service (Port 3005)
+
+| Method | Route | Access | Description |
+|--------|-------|--------|-------------|
+| POST | `/api/payments/intent` | Customer | Create a Stripe PaymentIntent for an order |
+| POST | `/api/payments/webhook` | Public (Stripe signature) | Receive Stripe webhook events |
+| GET | `/api/payments/order/:orderId` | Authenticated | Get payment status for an order |
+| GET | `/api/payments` | Admin only | List all payments (paginated, filterable) |
+
+### Stripe Local Development
+
+The Payment Service requires Stripe test keys. Copy the `.env.example` file:
+
+```bash
+cp services/payment-service/.env.example services/payment-service/.env
+# Edit .env with your Stripe test keys
+```
+
+To receive webhooks locally, use the [Stripe CLI](https://stripe.com/docs/stripe-cli):
+
+```bash
+stripe listen --forward-to localhost:3005/api/payments/webhook
+```
+
+Use Stripe test card `4242 4242 4242 4242` for successful payments.
 
 ## Security
 

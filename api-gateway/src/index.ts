@@ -88,6 +88,14 @@ app.use(
     })
 );
 
+app.use(
+    "/api/payments",
+    createProxyMiddleware({
+        target: "http://localhost:3005",
+        changeOrigin: true,
+    })
+);
+
 if (require.main === module) {
     app.listen(PORT, () => {
         console.log(`[API Gateway] Running on http://localhost:${PORT}`);

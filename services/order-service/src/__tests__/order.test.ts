@@ -6,7 +6,7 @@ import { initializeDatabase } from "../utils/initDb";
 import * as cartUtil from "../utils/cart";
 import * as catalogUtil from "../utils/catalog";
 
-const JWT_SECRET = process.env.JWT_SECRET ?? "aura_dev_secret_key";
+const JWT_SECRET = process.env.JWT_SECRET!;
 
 const customerId = "d1e04cc6-70e9-4d08-988f-c0f17eab8c3b";
 const otherCustomerId = "a2b05dd7-81fa-5e19-0990-d1028fab9d4c";

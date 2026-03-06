@@ -20,7 +20,8 @@ const swaggerOptions: swaggerJsdoc.Options = {
             { name: "Products", description: "Catalog and Inventory" },
             { name: "Cart", description: "Shopping Cart Management" },
             { name: "Checkout", description: "Order Checkout" },
-            { name: "Orders", description: "Order Management" }
+            { name: "Orders", description: "Order Management" },
+            { name: "Payments", description: "Payment Processing" }
         ],
         components: {
             securitySchemes: {

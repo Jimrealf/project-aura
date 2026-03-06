@@ -14,6 +14,7 @@
         "dev:catalog": "npm run dev --workspace=services/catalog-service",
         "dev:cart": "npm run dev --workspace=services/cart-service",
         "dev:order": "npm run dev --workspace=services/order-service",
+        "dev:payment": "npm run dev --workspace=services/payment-service",
         "seed:identity": "npx ts-node services/identity-service/src/utils/seed.ts",
         "seed:catalog": "npx ts-node services/catalog-service/src/utils/seed.ts",
         "seed:orders": "npx ts-node services/order-service/src/utils/seed.ts",

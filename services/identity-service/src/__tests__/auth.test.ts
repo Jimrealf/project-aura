@@ -1,12 +1,7 @@
 import request from "supertest";
-import express from "express";
-import authRoutes from "../routes/auth.routes";
+import app from "../index";
 import pool from "../utils/db";
 import { initializeDatabase } from "../utils/initDb";
-
-const app = express();
-app.use(express.json());
-app.use("/api/auth", authRoutes);
 
 const TEST_CUSTOMER = {
     email: `test_customer_${Date.now()}@aura.com`,

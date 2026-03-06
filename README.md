@@ -250,15 +250,7 @@ The order seed creates 1-4 orders per customer (50-100 total orders) with random
 
 ### Test Accounts
 
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | `admin@aura.com` | `Admin1234` |
-| Customer | `john.doe@aura.com` | `Customer123` |
-| Vendor | `techstore@aura.com` | `Vendor1234` |
-| Support | `support.alex@aura.com` | `Support1234` |
-
-All customer emails use password `Customer123`. All vendor emails use `Vendor1234`.
-Full list of seed users is in `services/identity-service/src/utils/seed.ts`.
+Test accounts are automatically generated during the seed process. Please refer to the comments at the top of `services/identity-service/src/utils/seed.ts` for the default login credentials.
 
 ## License
 

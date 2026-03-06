@@ -1,3 +1,9 @@
+// Default seed credentials:
+//   Admin:    admin@aura.com    / Admin1234
+//   Customer: john.doe@aura.com / Customer123  (all customers share this password)
+//   Vendor:   techstore@aura.com / Vendor1234  (all vendors share this password)
+//   Support:  support.alex@aura.com / Support1234
+
 import pool from "../utils/db";
 import bcrypt from "bcrypt";
 

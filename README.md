@@ -29,7 +29,9 @@ Postgres  MongoDB   Redis   Postgres  Postgres + Stripe
 | Order Service | Express + PostgreSQL (`pg`) + Axios |
 | Payment Service | Express + PostgreSQL (`pg`) + Stripe SDK |
 | API Docs | Swagger UI (swagger-jsdoc) |
+| Observability | Prometheus + Grafana (prom-client) |
 | Testing | Jest + ts-jest + Supertest |
+| CI/CD | GitHub Actions |
 | Infrastructure | Docker Compose |
 
 ## Getting Started
@@ -103,13 +105,16 @@ docker compose down
 project-aura/
 ├── api-gateway/             # Express reverse proxy & Swagger UI
 ├── packages/
-│   └── auth-middleware/     # Shared JWT verification (@aura/auth-middleware)
+│   ├── auth-middleware/     # Shared JWT verification (@aura/auth-middleware)
+│   └── metrics/             # Shared Prometheus metrics (@aura/metrics)
 ├── services/
 │   ├── identity-service/    # Auth & Users (PostgreSQL)
 │   ├── catalog-service/     # Products & Inventory (MongoDB)
 │   ├── cart-service/        # Shopping Cart (Redis)
 │   ├── order-service/       # Checkout & Orders (PostgreSQL)
 │   └── payment-service/     # Payments & Stripe (PostgreSQL + Stripe)
+├── observability/            # Prometheus + Grafana stack
+├── .github/workflows/       # CI pipeline (GitHub Actions)
 ├── docker-compose.yml       # Local infrastructure
 ├── tsconfig.json            # Shared TypeScript config
 └── jest.config.ts           # Test configuration
@@ -192,6 +197,41 @@ Use Stripe test card `4242 4242 4242 4242` for successful payments.
 - **Security Headers** — `helmet` middleware hardens all responses
 - **CORS** — Configurable via `ALLOWED_ORIGINS` env var (comma-separated), defaults to `*` in dev
 - **Error Handling** — Global error handler in every service ensures no stack traces are leaked; all errors return clean JSON
+
+## Observability
+
+Every service exposes a `/metrics` endpoint in Prometheus format, tracking request rates, latency percentiles, error rates, and Node.js memory usage.
+
+### Start the Monitoring Stack
+
+```bash
+cd observability
+docker compose up -d
+```
+
+- **Prometheus** — http://localhost:9090 (scrapes all 6 services every 5s)
+- **Grafana** — http://localhost:3100 (login: `admin` / `admin`)
+
+Grafana auto-provisions a **Project Aura - Microservices Overview** dashboard with four panels:
+
+![Grafana Dashboard - Request Rate, Error Rate, Latency, and Heap Memory](dashboard.png)
+
+### Stop Monitoring
+
+```bash
+cd observability
+docker compose down
+```
+
+## Continuous Integration
+
+Every push to `main` and every pull request triggers a GitHub Actions pipeline that:
+
+1. Spins up PostgreSQL, MongoDB, and Redis containers
+2. Installs dependencies
+3. Runs the full 162+ test suite
+
+The workflow is defined in `.github/workflows/ci.yml`.
 
 ## Seed Data
 

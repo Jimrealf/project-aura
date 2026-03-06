@@ -1,0 +1,72 @@
+name: Test Suite (CI)
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+
+        services:
+            postgres:
+                image: postgres:16-alpine
+                env:
+                    POSTGRES_USER: aura
+                    POSTGRES_PASSWORD: aura_dev
+                    POSTGRES_DB: aura_db
+                ports:
+                    - 5432:5432
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+
+            redis:
+                image: redis:7-alpine
+                ports:
+                    - 6379:6379
+                options: >-
+                    --health-cmd "redis-cli ping"
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+
+            mongo:
+                image: mongo:7
+                ports:
+                    - 27017:27017
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: "npm"
+
+            - name: Install Dependencies
+              run: npm ci
+
+            - name: Run Test Suite
+              env:
+                  DB_HOST: localhost
+                  DB_PORT: 5432
+                  DB_USER: aura
+                  DB_PASSWORD: aura_dev
+                  DB_NAME: aura_db
+                  MONGO_URI: mongodb://localhost:27017/aura_catalog
+                  MONGO_URI_TEST: mongodb://localhost:27017/aura_catalog_test
+                  REDIS_URL: redis://localhost:6379
+                  JWT_SECRET: ci_test_secret_key
+                  CATALOG_SERVICE_URL: http://localhost:3002
+                  CART_SERVICE_URL: http://localhost:3003
+                  ORDER_SERVICE_URL: http://localhost:3004
+                  STRIPE_SECRET_KEY: sk_test_placeholder
+                  STRIPE_WEBHOOK_SECRET: whsec_placeholder
+              run: npm test -- --forceExit

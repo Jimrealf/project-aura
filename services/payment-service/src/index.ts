@@ -5,9 +5,12 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 import express, { Request, Response, NextFunction } from "express";
 import { initializeDatabase } from "./utils/initDb";
 import paymentRoutes from "./routes/payment.routes";
+import { metricsMiddleware, metricsEndpoint } from "@aura/metrics";
 
 const app = express();
 const PORT = process.env.PORT ?? 3005;
+
+app.use(metricsMiddleware);
 
 app.use("/api/payments/webhook", express.raw({ type: "application/json" }));
 
@@ -18,6 +21,7 @@ app.use("/api/payments", paymentRoutes);
 app.get("/health", (_req, res) => {
     res.json({ status: "ok", service: "payment-service" });
 });
+app.get("/metrics", metricsEndpoint);
 
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     console.error("[Payment Service] Unhandled error:", err);

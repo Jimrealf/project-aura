@@ -32,8 +32,3 @@ coverage/
 pgdata/
 mongodata/
 redisdata/
-
-# Agent files
-AGENTS.md
-
-

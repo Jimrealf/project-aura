@@ -5,15 +5,18 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 import express, { Request, Response, NextFunction } from "express";
 import authRoutes from "./routes/auth.routes";
 import { initializeDatabase } from "./utils/initDb";
+import { metricsMiddleware, metricsEndpoint } from "@aura/metrics";
 
 const app = express();
 const PORT = process.env.PORT ?? 3001;
 
+app.use(metricsMiddleware);
 app.use(express.json());
 
 app.get("/health", (_req, res) => {
     res.json({ status: "ok", service: "identity-service" });
 });
+app.get("/metrics", metricsEndpoint);
 
 app.use("/api/auth", authRoutes);
 

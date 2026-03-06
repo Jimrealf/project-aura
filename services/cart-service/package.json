@@ -11,6 +11,7 @@
     },
     "dependencies": {
         "@aura/auth-middleware": "*",
+        "@aura/metrics": "*",
         "axios": "^1.7.2",
         "dotenv": "^16.3.1",
         "express": "^4.18.2",

@@ -5,11 +5,13 @@ import rateLimit from "express-rate-limit";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger";
+import { metricsMiddleware, metricsEndpoint } from "@aura/metrics";
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
 app.use(helmet());
+app.use(metricsMiddleware);
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",");
 app.use(cors(allowedOrigins ? { origin: allowedOrigins } : undefined));
@@ -45,6 +47,8 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.get("/health", (_req, res) => {
     res.json({ status: "ok", service: "api-gateway" });
 });
+
+app.get("/metrics", metricsEndpoint);
 
 app.use(
     "/api/auth",

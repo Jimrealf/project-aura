@@ -214,7 +214,7 @@ docker compose up -d
 
 Grafana auto-provisions a **Project Aura - Microservices Overview** dashboard with four panels:
 
-![Grafana Dashboard - Request Rate, Error Rate, Latency, and Heap Memory](dashboard.png)
+![Grafana Dashboard - Request Rate, Error Rate, Latency, and Heap Memory](Dashboard.png)
 
 ### Stop Monitoring
 
